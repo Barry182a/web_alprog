@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Home - Barri E-Commerce</title>
+</head>
+<body>
+    <h1>Selamat Datang di Barri E-Commerce</h1>
+    <p>Status: Anda berhasil masuk sebagai <strong>{{ request.user.username }}</strong> dengan role <strong>{{ request.user.role }}</strong></p>
+    <a href="{% url 'logout' %}">Keluar/Logout</a>
+</body>
+</html>

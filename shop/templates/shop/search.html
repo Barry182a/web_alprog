@@ -1,0 +1,335 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pencarian Produk - Barri E-Commerce</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-primary: #fafafa;
+            --bg-card: #ffffff;
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --accent-soft: #87a99c;
+            --accent-hover: #6f8f82;
+            --border-color: #f1f2f6;
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.02);
+            --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header-section {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header-section h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .header-section a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* PERUBAHAN UTAMA: Kontainer Bar Pencarian Sekarang Bersifat Sticky */
+        .search-container-box {
+            position: sticky;
+            top: 0; /* Menempel tepat di batas paling atas layar saat digulir */
+            background-color: var(--bg-primary); /* Menyamai warna latar agar produk di bawahnya tersembunyi sempurna */
+            padding: 20px 0; /* Memberikan ruang udara yang konsisten saat bar posisi melayang */
+            z-index: 1000; /* Mengunci posisi bar agar selalu berada di lapisan terdepan di atas kartu produk */
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+        }
+
+        .search-form-wrapper {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input-field {
+            width: 100%;
+            padding: 16px 60px 16px 24px;
+            font-size: 1rem;
+            font-family: inherit;
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            outline: none;
+            background-color: var(--bg-card);
+            box-shadow: var(--shadow-soft);
+            transition: all 0.2s ease;
+        }
+
+        .search-input-field:focus {
+            border-color: var(--accent-soft);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .search-btn-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .search-btn-icon:hover {
+            color: var(--accent-soft);
+            background-color: #f1f2f6;
+        }
+
+        .dropdown-suggestion-panel {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 100%;
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-color);
+            z-index: 1001; /* Harus lebih tinggi dari z-index kontainer agar tidak tertutup */
+            display: none;
+            overflow: hidden;
+        }
+
+        .suggestion-row-item {
+            padding: 14px 24px;
+            font-size: 0.92rem;
+            cursor: pointer;
+            color: var(--text-main);
+            transition: background-color 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .suggestion-row-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Kisi Katalog Hasil Pencarian */
+        .search-results-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            position: relative;
+            z-index: 1; /* Berada di lapisan bawah bar pencarian sticky */
+        }
+
+        .product-card-item {
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(0, 0, 0, 0.01);
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .product-card-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-img-box {
+            width: 100%;
+            height: 200px;
+            background-color: #f7f7f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .card-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-info-box {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .card-info-box h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-info-box .price-tag {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .card-info-box .category-tag-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .empty-result-card {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            border: 1px dashed var(--border-color);
+        }
+
+        @media (max-width: 850px) {
+            .search-results-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="search-container-box">
+            <form id="searchForm" method="GET" action="{% url 'pencarian_produk' %}" class="search-form-wrapper">
+                <input type="text" name="q" id="searchInput" autocomplete="off" placeholder="Ketik nama baju, celana, atau kategori produk..." value="{{ query }}" class="search-input-field">
+                <button type="submit" class="search-btn-icon" aria-label="Tombol Cari">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+            </form>
+            <div id="suggestionPanel" class="dropdown-suggestion-panel"></div>
+        </div>
+
+        <main class="search-results-grid">
+            {% for produk in hasil_produk %}
+            <a href="{% url 'detail_produk' produk.pk %}" class="product-card-item">
+                <div class="card-img-box">
+                    {% if produk.gambar %}
+                    <img src="{{ produk.gambar.url }}" alt="{{ produk.nama }}">
+                    {% else %}
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">No Image</span>
+                    {% endif %}
+                </div>
+                <div class="card-info-box">
+                    <span class="category-tag-label">{{ produk.kategori }}</span>
+                    <h3>{{ produk.nama }}</h3>
+                    <div class="price-tag">Rp {{ produk.harga|floatformat:0|intcomma }}</div>
+                </div>
+            </a>
+            {% empty %}
+                {% if query %}
+                <div class="empty-result-card">
+                    <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 4px; color: var(--text-main);">Produk Tidak Ditemukan</p>
+                    <p style="font-size: 0.9rem;">Sistem tidak menemukan barang yang cocok dengan kata kunci "{{ query }}". Cobalah kata kunci umum lainnya.</p>
+                </div>
+                {% else %}
+                <div class="empty-result-card">
+                    <p style="font-size: 0.9rem;">Silakan ketik kata kunci di kolom atas untuk mulai berburu barang belanjaan favorit Anda.</p>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </main>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const suggestionPanel = document.getElementById('suggestionPanel');
+        const searchForm = document.getElementById('searchForm');
+
+        searchInput.addEventListener('input', function() {
+            const kataKetik = this.value.trim();
+            
+            if (kataKetik.length < 1) {
+                suggestionPanel.style.display = 'none';
+                return;
+            }
+
+            fetch(`/pencarian/rekomendasi-kata/?q=${encodeURIComponent(kataKetik)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const listSaran = data.suggestions;
+                    if (listSaran.length === 0) {
+                        suggestionPanel.style.display = 'none';
+                        return;
+                    }
+
+                    suggestionPanel.innerHTML = '';
+                    listSaran.forEach(saran => {
+                        const baris = document.createElement('div');
+                        baris.className = 'suggestion-row-item';
+                        baris.innerHTML = `🔍 <span>${saran}</span>`;
+                        
+                        baris.addEventListener('click', function() {
+                            searchInput.value = saran;
+                            suggestionPanel.style.display = 'none';
+                            searchForm.submit();
+                        });
+                        suggestionPanel.appendChild(baris);
+                    });
+                    suggestionPanel.style.display = 'block';
+                });
+        });
+
+        document.addEventListener('click', function(event) {
+            if (!searchInput.contains(event.target) && !suggestionPanel.contains(event.target)) {
+                suggestionPanel.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>

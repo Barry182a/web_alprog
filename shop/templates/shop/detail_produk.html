@@ -1,0 +1,377 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ produk.nama }} - Barri E-Commerce</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-primary: #fafafa;
+            --bg-card: #ffffff;
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --accent-soft: #87a99c;
+            --accent-hover: #6f8f82;
+            --border-color: #f1f2f6;
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.02);
+            --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .back-nav {
+            margin-bottom: 30px;
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--text-main);
+        }
+
+        /* Layout Grid Detail Utama */
+        .detail-wrapper {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 50px;
+            background-color: var(--bg-card);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(0, 0, 0, 0.01);
+            margin-bottom: 50px;
+        }
+
+        /* Area Visual Kiri */
+        .gallery-container {
+            width: 100%;
+            height: 480px;
+            background-color: #f7f7f7;
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .main-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .no-image-placeholder {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Area Informasi Kanan */
+        .info-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .category-tag {
+            align-self: flex-start;
+            background-color: #f1f2f6;
+            color: var(--text-main);
+            padding: 6px 14px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            border-radius: 20px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .product-title {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .price-display {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .description-content {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+            white-space: pre-line;
+        }
+
+        .meta-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #fafafa;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+        }
+
+        .status-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-out {
+            color: #d63031;
+            font-weight: 700;
+        }
+
+        .buy-button {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--accent-soft);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .buy-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .buy-button:active {
+            transform: scale(0.99);
+        }
+
+        .buy-button:disabled {
+            background-color: #e0e0e0;
+            color: #a0a0a0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Styling Area Produk Sejenis */
+        .similar-section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -0.3px;
+        }
+
+        .similar-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .similar-card {
+            background-color: var(--bg-card);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(0, 0, 0, 0.01);
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .similar-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .similar-img-container {
+            width: 100%;
+            height: 160px;
+            background-color: #f7f7f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .similar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .similar-details {
+            padding: 15px;
+        }
+
+        .similar-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .similar-price {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* Kepatuhan Layar Ringkas Mobile */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 12px;
+            }
+
+            .detail-wrapper {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                padding: 20px;
+                border-radius: 16px;
+            }
+
+            .gallery-container {
+                height: 320px;
+            }
+
+            .product-title {
+                font-size: 1.5rem;
+            }
+
+            .price-display {
+                font-size: 1.35rem;
+            }
+
+            .similar-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .similar-img-container {
+                height: 120px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <main class="detail-wrapper">
+            <section class="gallery-container">
+                {% if produk.gambar %}
+                <img src="{{ produk.gambar.url }}" alt="{{ produk.nama }}" class="main-image">
+                {% else %}
+                <span class="no-image-placeholder">No Image Available</span>
+                {% endif %}
+            </section>
+
+            <section class="info-container">
+                {% if produk.kategori %}
+                <span class="category-tag">{{ produk.kategori }}</span>
+                {% endif %}
+
+                <h1 class="product-title">{{ produk.nama }}</h1>
+                <div class="price-display">Rp {{ produk.harga|floatformat:0|intcomma }}</div>
+
+                <div class="section-label">Spesifikasi / Deskripsi Produk</div>
+                <p class="description-content">{{ produk.deskripsi|default:"Pemilik toko belum menambahkan deskripsi khusus untuk produk ini." }}</p>
+
+                <div class="meta-status">
+                    <span class="status-text" style="color: var(--text-muted);">Ketersediaan Barang</span>
+                    <span class="status-text">
+                        {% if produk.stok > 0 %}
+                        <strong>{{ produk.stok }} unit</strong> tersedia
+                        {% else %}
+                        <span class="status-out">Stok Habis</span>
+                        {% endif %}
+                    </span>
+                </div>
+
+                {% if produk.stok > 0 %}
+                <a href="{% url 'checkout' produk.pk %}" style="text-decoration: none; display: block;">
+                    <button type="button" class="buy-button">Konfirmasi Beli Sekarang</button>
+                </a>
+                {% else %}
+                <button class="buy-button" disabled>Maaf, Produk Tidak Dapat Dibeli</button>
+                {% endif %}
+            </section>
+        </main>
+
+        {% if produk_mirip %}
+        <section style="margin-top: 40px;">
+            <h2 class="similar-section-title">Produk yang Mirip</h2>
+            <div class="similar-grid">
+                {% for prod in produk_mirip %}
+                <a href="{% url 'detail_produk' prod.pk %}" class="similar-card">
+                    <div class="similar-img-container">
+                        {% if prod.gambar %}
+                        <img src="{{ prod.gambar.url }}" alt="{{ prod.nama }}" class="similar-img">
+                        {% else %}
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">No Image</span>
+                        {% endif %}
+                    </div>
+                    <div class="similar-details">
+                        <h3 class="similar-name">{{ prod.nama }}</h3>
+                        <div class="similar-price">Rp {{ prod.harga|floatformat:0|intcomma }}</div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+    </div>
+</body>
+
+</html>

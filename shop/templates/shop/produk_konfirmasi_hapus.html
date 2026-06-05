@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Konfirmasi Hapus Produk</title>
+</head>
+<body>
+    <h2>Peringatan Hapus Data</h2>
+    <p>Apakah Anda yakin ingin menghapus produk bernama <strong>{{ produk.nama }}</strong> secara permanen dari basis data?</p>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Ya, Hapus Sekarang</button>
+        <a href="{% url 'admin_dashboard' %}">Batal</a>
+    </form>
+</body>
+</html>

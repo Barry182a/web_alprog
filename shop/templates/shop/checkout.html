@@ -1,0 +1,517 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Pesanan - Barri E-Commerce</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-primary: #fafafa;
+            --bg-card: #ffffff;
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --accent-soft: #87a99c;
+            --accent-hover: #6f8f82;
+            --border-color: #f1f2f6;
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 30px;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--text-main);
+        }
+
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .main-section {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .checkout-card {
+            background-color: var(--bg-card);
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(0,0,0,0.01);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 0.95rem;
+            font-weight: 500;
+            background-color: #fafafa;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .payment-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background-color: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .payment-label:hover {
+            border-color: #e2e2e2;
+        }
+
+        .payment-radio {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            outline: none;
+            background-color: #fff;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .payment-radio:checked {
+            border-color: var(--accent-soft);
+            background-color: var(--accent-soft);
+        }
+
+        .payment-radio:checked::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #fff;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .payment-label-active {
+            border-color: var(--accent-soft) !important;
+            background-color: rgba(135, 169, 156, 0.03);
+        }
+
+        .payment-text-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .payment-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .payment-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .summary-sidebar {
+            position: sticky;
+            top: 40px;
+        }
+
+        .product-summary-item {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .summary-thumb {
+            width: 64px;
+            height: 64px;
+            object-fit: cover;
+            border-radius: 8px;
+            background-color: #f7f7f7;
+            border: 1px solid var(--border-color);
+        }
+
+        .summary-prod-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .summary-prod-cat {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .bill-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .checkout-submit-btn {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--accent-soft);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .checkout-submit-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .checkout-submit-btn:active {
+            transform: scale(0.99);
+        }
+
+        /* Styling Komponen Jendela Popup Konfirmasi Sukses */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(45, 52, 54, 0.4);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        /* Memicu Popup Muncul Secara Halus */
+        .popup-overlay.muncul {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .popup-card {
+            background-color: var(--bg-card);
+            padding: 40px 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 420px;
+            width: 90%;
+            transform: scale(0.8);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .popup-overlay.muncul .popup-card {
+            transform: scale(1);
+        }
+
+        .mascot-box {
+            width: 220px;
+            height: 220px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mascot-animation {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .popup-card h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: -0.3px;
+        }
+
+        .popup-card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+        }
+
+        /* Garis Pemuatan Otomatis Kembali ke Beranda */
+        .loading-bar-wrapper {
+            width: 100%;
+            height: 4px;
+            background-color: var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .loading-bar-progress {
+            width: 0%;
+            height: 100%;
+            background-color: var(--accent-soft);
+            border-radius: 10px;
+            transition: width 4s linear;
+        }
+
+        @media (max-width: 850px) {
+            .checkout-grid {
+                grid-template-columns: 1fr;
+            }
+            .summary-sidebar {
+                position: static;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="checkout-grid">
+            <div class="main-section">
+                
+                <div class="checkout-card">
+                    <h2 class="card-title">👤 Informasi Pelanggan</h2>
+                    <div class="info-group">
+                        <div class="info-item">
+                            <span class="info-label">Nama Pengguna (Username)</span>
+                            <div class="info-value">{{ pembeli.username }}</div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Alamat Email Pembeli</span>
+                            <div class="info-value">{{ pembeli.email|default:"Alamat email belum ditambahkan" }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkout-card">
+                    <h2 class="card-title">💳 Metode Pembayaran</h2>
+                    <form id="checkoutForm" method="POST" action="{% url 'beli_produk' produk.pk %}" class="payment-options">
+                        {% csrf_token %}
+                        
+                        <label class="payment-label payment-label-active" id="labelBank">
+                            <div class="payment-text-wrapper">
+                                <span class="payment-title">Transfer Bank</span>
+                                <span class="payment-desc">Verifikasi pembayaran otomatis</span>
+                            </div>
+                            <input type="radio" name="metode_pembayaran" value="bank" class="payment-radio" checked onclick="gantiMetode('bank')">
+                        </label>
+
+                        <label class="payment-label" id="labelCod">
+                            <div class="payment-text-wrapper">
+                                <span class="payment-title">Cash on Delivery (COD)</span>
+                                <span class="payment-desc">Bayar tunai langsung di tempat saat kurir mengantarkan barang</span>
+                            </div>
+                            <input type="radio" name="metode_pembayaran" value="cod" class="payment-radio" onclick="gantiMetode('cod')">
+                        </label>
+                    </form>
+                </div>
+
+            </div>
+
+            <div class="summary-sidebar">
+                <div class="checkout-card">
+                    <h2 class="card-title">📦 Ringkasan Pesanan</h2>
+                    
+                    <div class="product-summary-item">
+                        {% if produk.gambar %}
+                        <img src="{{ produk.gambar.url }}" alt="{{ produk.nama }}" class="summary-thumb">
+                        {% else %}
+                        <div class="summary-thumb" style="display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--text-muted);">No Image</div>
+                        {% endif %}
+                        <div>
+                            <h3 class="summary-prod-name">{{ produk.nama }}</h3>
+                            <span class="summary-prod-cat">{{ produk.kategori|default:"Umum" }}</span>
+                        </div>
+                    </div>
+
+                    <div class="bill-row">
+                        <span>Subtotal Produk</span>
+                        <span>Rp {{ produk.harga|floatformat:0|intcomma }}</span>
+                    </div>
+                    <div class="bill-row">
+                        <span>Biaya Pengiriman (Ongkir)</span>
+                        <span style="color: #2ecc71; font-weight: 500;">Gratis Ongkir</span>
+                    </div>
+                    <div class="bill-row">
+                        <span>Jumlah Pembelian</span>
+                        <span>1 Barang</span>
+                    </div>
+
+                    <div class="total-row">
+                        <span>Total Pembayaran</span>
+                        <span>Rp {{ produk.harga|floatformat:0|intcomma }}</span>
+                    </div>
+
+                    <button type="submit" form="checkoutForm" class="checkout-submit-btn">Selesaikan Transaksi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="successPopup" class="popup-overlay">
+        <div class="popup-card">
+            <div class="mascot-box">
+                <img src="https://www.reallusion.com/cartoon-animator/includes/images/sequence-images-gif-animation/format-GIF.gif" alt="Success Mascot" class="mascot-animation">
+            </div>
+            <h2>Pesanan Sukses Dibuat!</h2>
+            <p>Transaksi Anda berhasil diamankan. Mengalihkan Anda kembali ke halaman utama katalog...</p>
+            
+            <div class="loading-bar-wrapper">
+                <div id="loadingProgress" class="loading-bar-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function gantiMetode(metode) {
+            const labelBank = document.getElementById('labelBank');
+            const labelCod = document.getElementById('labelCod');
+            
+            if (metode === 'bank') {
+                labelBank.classList.add('payment-label-active');
+                labelCod.classList.remove('payment-label-active');
+            } else {
+                labelCod.classList.add('payment-label-active');
+                labelBank.classList.remove('payment-label-active');
+            }
+        }
+
+        /* Interseptor Pengendali Tombol Selesaikan Transaksi */
+        document.getElementById('checkoutForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Menahan refresh halaman bawaan browser
+            
+            const form = this;
+            const formData = new FormData(form);
+            
+            // 1. Munculkan Popup Animasi ke Layar secara Halus
+            const popup = document.getElementById('successPopup');
+            const progressBar = document.getElementById('loadingProgress');
+            
+            popup.classList.add('muncul');
+            
+            // Memicu bar kemajuan bergerak dari 0% ke 100% selama 4 detik
+            setTimeout(() => {
+                progressBar.style.width = '100%';
+            }, 50);
+
+            // 2. Kirim Data Transaksi ke Server Django Lewat Jalur Belakang (AJAX)
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            })
+            .then(response => {
+                // 3. Setelah Menunggu 4 Detik Animasi, Pindahkan Halaman ke Beranda
+                setTimeout(() => {
+                    window.location.href = "{% url 'user_dashboard' %}";
+                }, 4000);
+            })
+            .catch(error => {
+                // Antisipasi kegagalan jaringan saat pengujian lokal agar tetap kembali ke beranda
+                setTimeout(() => {
+                    window.location.href = "{% url 'user_dashboard' %}";
+                }, 4000);
+            });
+        });
+    </script>
+</body>
+
+</html>

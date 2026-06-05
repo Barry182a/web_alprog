@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ aksi }} - Barri E-Commerce</title>
+    <!-- Google Fonts untuk Tipografi Estetik -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-primary: #fafafa;
+            --bg-card: #ffffff;
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --accent-soft: #87a99c;
+            --accent-hover: #6f8f82;
+            --border-color: #f1f2f6;
+            --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.03);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Container Kartu Autentikasi terpusat */
+        .auth-container {
+            width: 100%;
+            max-width: 400px;
+            background-color: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(0, 0, 0, 0.01);
+            text-align: center;
+        }
+
+        /* Branding & Judul */
+        .auth-logo {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 5px;
+        }
+
+        .auth-subtitle {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        /* Modifikasi Elemen Form Bawaan Django {{ form.as_p }} */
+        form {
+            text-align: left;
+        }
+
+        /* Menargetkan tag paragraf pembungkus input dari Django */
+        form p {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        /* Menargetkan label text */
+        form label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            padding-left: 2px;
+        }
+
+        /* Menargetkan kotak input bawaan (Text, Password, Email, dll) */
+        form input[type="text"],
+        form input[type="password"],
+        form input[type="email"],
+        form input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 0.92rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-main);
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        form input:focus {
+            border-color: var(--accent-soft);
+            background-color: var(--bg-card);
+            box-shadow: 0 0 0 3px rgba(135, 169, 156, 0.12);
+        }
+
+        /* Teks Bantuan/Eror Bawaan Django Form */
+        .helptext {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            padding-left: 2px;
+            line-height: 1.3;
+        }
+
+        .errorlist {
+            list-style: none;
+            color: #d63031;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+            font-weight: 500;
+            background-color: #fdf2f2;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        /* Tombol Submit Utama */
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--accent-soft);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            margin-top: 10px;
+            margin-bottom: 25px;
+        }
+
+        .auth-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .auth-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Footer Tautan Pindah Halaman */
+        .auth-footer {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        .auth-footer a {
+            color: var(--accent-soft);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .auth-footer a:hover {
+            color: var(--accent-hover);
+        }
+
+        /* Responsif untuk Layar Sangat Kecil */
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 30px 20px;
+                box-shadow: none;
+                border: none;
+                background-color: transparent;
+            }
+            body {
+                background-color: var(--bg-card);
+            }
+            form input {
+                background-color: #f6f6f6;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-container">
+        <!-- Struktur Kepala Kartu -->
+        <div class="auth-logo">Barry's Collections</div>
+        <div class="auth-subtitle">
+            {% if aksi == 'Login' %}
+                Silakan masuk untuk melanjutkan transaksi belanja Anda
+            {% else %}
+                Daftarkan akun baru untuk mulai menjelajahi katalog kami
+            {% endif %}
+        </div>
+
+        <!-- Form Autentikasi Core -->
+        <form method="POST">
+            {% csrf_token %}
+            
+            {# Otomatis merender error-list Django dengan gaya estetik merah soft #}
+            {% if form.errors %}
+                {{ form.errors }}
+            {% endif %}
+
+            {# Merender paragraph field dengan injeksi CSS kustom di atas #}
+            {{ form.as_p }}
+            
+            <button type="submit" class="auth-btn">Halaman {{ aksi }}</button>
+        </form>
+
+        <!-- Footer Alur Perpindahan Halaman Autentikasi -->
+        <div class="auth-footer">
+            {% if aksi == 'Login' %}
+                <p>Belum memiliki akun? <a href="{% url 'register' %}">Daftar sekarang</a></p>
+            {% else %}
+                <p>Sudah terdaftar sebelumnya? <a href="{% url 'login' %}">Login di sini</a></p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

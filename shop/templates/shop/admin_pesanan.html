@@ -1,0 +1,330 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Pesanan Pelanggan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-primary: #fafafa;
+            --bg-card: #ffffff;
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --accent-soft: #87a99c;
+            --accent-hover: #6f8f82;
+            --border-color: #f1f2f6;
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.02);
+            --danger-color: #d63031;
+            --success-color: #2ecc71;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .back-dashboard-btn {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            font-weight: 600;
+            padding: 10px 16px;
+            border-radius: 10px;
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .back-dashboard-btn:hover {
+            color: var(--text-main);
+            border-color: #e2e2e2;
+        }
+
+        .table-responsive-wrapper {
+            background-color: var(--bg-card);
+            border-radius: 20px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(0, 0, 0, 0.01);
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        .orders-data-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .orders-data-table th {
+            background-color: #fafafa;
+            padding: 18px 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .orders-data-table td {
+            padding: 20px;
+            font-size: 0.92rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+        }
+
+        .orders-data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .buyer-info-box {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .buyer-username {
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .buyer-email {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .items-list-box {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .item-row-detail {
+            font-size: 0.88rem;
+            background-color: #fafafa;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            transition: all 0.3s ease;
+        }
+
+        .badge-proses {
+            background-color: #f39c12;
+            color: #ffffff;
+        }
+
+        .badge-kirim {
+            background-color: #3498db;
+            color: #ffffff;
+        }
+
+        .badge-selesai {
+            background-color: rgba(46, 204, 113, 0.15);
+            color: #27ae60;
+        }
+
+        .badge-batal {
+            background-color: rgba(214, 48, 49, 0.15);
+            color: var(--danger-color);
+        }
+
+        .actions-btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-decision {
+            padding: 8px 14px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-block;
+            transition: background-color 0.15s ease;
+        }
+
+        .btn-approve-success {
+            background-color: var(--accent-soft);
+            color: white;
+        }
+
+        .btn-approve-success:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-reject-danger {
+            background-color: #f1f2f6;
+            color: var(--danger-color);
+        }
+
+        .btn-reject-danger:hover {
+            background-color: rgba(214, 48, 49, 0.1);
+        }
+
+        .empty-orders-card {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="page-header">
+            <h1>Manajemen Pesanan Masuk</h1>
+        </header>
+
+        <div class="table-responsive-wrapper">
+            <table class="orders-data-table">
+                <thead>
+                    <tr>
+                        <th>Nota / Tanggal</th>
+                        <th>Data Pembeli</th>
+                        <th>Rincian Item Barang</th>
+                        <th>Total Bayar</th>
+                        <th>Status</th>
+                        <th style="text-align: center;">Tindakan Admin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pesanan in daftar_pesanan %}
+                    <tr>
+                        <td style="font-weight: 600; font-size: 0.88rem;">
+                            ID #{{ pesanan.pk }}<br>
+                            <span style="font-size: 0.78rem; font-weight: 400; color: var(--text-muted);">{{pesanan.tanggal_transaksi|date:"d M Y, H:i" }}</span>
+                        </td>
+
+                        <td>
+                            <div class="buyer-info-box">
+                                <span class="buyer-username">{{ pesanan.pembeli.username }}</span>
+                                <span class="buyer-email">{{ pesanan.pembeli.email|default:"Tidak ada email" }}</span>
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="items-list-box">
+                                {% for item in pesanan.item_pesanan.all %}
+                                <div class="item-row-detail">
+                                    <strong>{{ item.produk.nama|default:"Produk Telah Dihapus" }}</strong>
+                                    <span style="color: var(--text-muted);">x{{ item.jumlah }} unit</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </td>
+
+                        <td style="font-weight: 700; color: var(--text-main);">
+                            Rp {{ pesanan.total_harga|floatformat:0|intcomma }}
+                        </td>
+
+                        <td>
+                            <span id="badge-{{ pesanan.pk }}" class="status-badge badge-{{ pesanan.status }}">
+                                {{ pesanan.get_status_display|default:pesanan.status }}
+                            </span>
+                        </td>
+
+                        <td style="vertical-align: middle; text-align: center;" id="action-cell-{{ pesanan.pk }}">
+                            {% if pesanan.status == 'proses' or pesanan.status == 'kirim' %}
+                            <div class="actions-btn-group">
+                                <button type="button" onclick="eksekusiKeputusan('{{ pesanan.pk }}', 'selesai')"
+                                    class="btn-decision btn-approve-success">Selesaikan</button>
+                                <button type="button" onclick="eksekusiKeputusan('{{ pesanan.pk }}', 'batal')"
+                                    class="btn-decision btn-reject-danger">Batalkan</button>
+                            </div>
+                            {% else %}
+                            <span style="font-size: 0.82rem; color: var(--text-muted); font-style: italic;">Selesai
+                                Diproses</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="empty-orders-card">
+                            <p
+                                style="font-size: 1.1rem; font-weight: 600; margin-bottom: 4px; color: var(--text-main);">
+                                Belum Ada Pesanan</p>
+                            <p style="font-size: 0.9rem;">Seluruh riwayat nota belanja dari pelanggan akan otomatis
+                                terkumpul di tabel ini.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function eksekusiKeputusan(pesananId, opsi) {
+            // Memanggil alamat URL Django secara sunyi di latar belakang tanpa mengotori history stack peramban
+            fetch(`/admin-dashboard/pesanan/${pesananId}/status/${opsi}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Memperbarui warna kelas CSS dan tulisan teks pada lencana status secara real-time
+                        const lencanaBadge = document.getElementById(`badge-${pesananId}`);
+                        if (lencanaBadge) {
+                            lencanaBadge.className = `status-badge badge-${data.new_status}`;
+                            lencanaBadge.innerText = data.status_display;
+                        }
+
+                        // Menghapus sepasang tombol tindakan dan menggantinya dengan teks penanda arsip terkunci
+                        const kolomTindakan = document.getElementById(`action-cell-${pesananId}`);
+                        if (kolomTindakan) {
+                            kolomTindakan.innerHTML = '<span style="font-size: 0.82rem; color: var(--text-muted); font-style: italic;">Selesai Diproses</span>';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Terjadi kendala saat mengirimkan data keputusan:', error);
+                });
+        }
+    </script>
+</body>
+
+</html>
