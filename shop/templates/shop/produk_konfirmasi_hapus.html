@@ -1,16 +1,30 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Konfirmasi Hapus Produk</title>
-</head>
-<body>
-    <h2>Peringatan Hapus Data</h2>
-    <p>Apakah Anda yakin ingin menghapus produk bernama <strong>{{ produk.nama }}</strong> secara permanen dari basis data?</p>
-    <form method="POST">
-        {% csrf_token %}
-        <button type="submit">Ya, Hapus Sekarang</button>
-        <a href="{% url 'admin_dashboard' %}">Batal</a>
-    </form>
-</body>
-</html>
+<div style="display: flex; justify-content: center; align-items: center; min-height: 80vh; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f5f6fa; padding: 20px;">
+    
+    <div style="background-color: #ffffff; width: 100%; max-width: 500px; padding: 35px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center;">
+        
+        <div style="width: 60px; height: 60px; background-color: #ffeaa7; color: #d63031; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 20px auto; font-size: 28px; font-weight: bold;">
+            !
+        </div>
+
+        <h2 style="color: #2d3436; font-size: 22px; font-weight: 700; margin-bottom: 15px; margin-top: 0;">
+            Peringatan Hapus Data
+        </h2>
+        
+        <p style="color: #636e72; font-size: 15px; line-height: 1.6; margin-bottom: 30px;">
+            Apakah Anda yakin ingin menghapus produk bernama <strong style="color: #2d3436;">{{ produk.nama }}</strong> secara permanen dari basis data? Tindakan ini tidak dapat dibatalkan.
+        </p>
+
+        <form method="POST" style="display: flex; gap: 12px; justify-content: center;">
+            {% csrf_token %}
+            
+            <a href="{% url 'admin_dashboard' %}" style="flex: 1; padding: 12px; background-color: #dfe6e9; color: #2d3436; text-decoration: none; border-radius: 12px; font-size: 15px; font-weight: 600; transition: all 0.3s ease; display: inline-block; text-align: center;" onmouseover="this.style.backgroundColor='#b2bec3'" onmouseout="this.style.backgroundColor='#dfe6e9'">
+                Batal
+            </a>
+
+            <button type="submit" style="flex: 1; padding: 12px; background-color: #d63031; color: #ffffff; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#c0392b'" onmouseout="this.style.backgroundColor='#d63031'">
+                Ya, Hapus
+            </button>
+            
+        </form>
+    </div>
+</div>

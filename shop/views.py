@@ -15,15 +15,36 @@ from django.db.models import Sum
 User = get_user_model()
 
 def register_view(request):
+    # Memeriksa keberadaan admin secara realtime
+    admin_terdaftar = User.objects.filter(role='admin').exists()
+    
     if request.method == 'POST':
         form = RegistrasiForm(request.POST)
+        
+        # Keamanan berlapis di sisi server
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('home')
+            role_dipilih = form.cleaned_data.get('role')
+            
+            # Jika nekat mendaftar sebagai admin padahal admin sudah ada, lemparkan error
+            if role_dipilih == 'admin' and admin_terdaftar:
+                form.add_error('role', 'Pendaftaran sebagai akun Administrator telah ditutup.')
+            else:
+                user = form.save()
+                login(request, user)
+                return redirect('home')
     else:
         form = RegistrasiForm()
-    return render(request, 'shop/auth.html', {'form': form, 'aksi': 'Registrasi'})
+        
+        # Jika admin sudah ada, hapus opsi 'admin' dari pilihan dropdown secara dinamis
+        if admin_terdaftar and 'role' in form.fields:
+            pilihan_asli = form.fields['role'].choices
+            form.fields['role'].choices = [(k, v) for k, v in pilihan_asli if k != 'admin']
+            
+    context = {
+        'form': form, 
+        'aksi': 'Registrasi'
+    }
+    return render(request, 'shop/auth.html', context)
 
 def login_view(request):
     if request.method == 'POST':
