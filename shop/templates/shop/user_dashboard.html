@@ -475,7 +475,12 @@
             </div>
 
             <div class="recommend-grid">
-                {% for prod in produk_rekomendasi %} <div class="recommend-card">
+                {% for prod in produk_rekomendasi %} 
+                <a href="{% url 'detail_produk' prod.pk %}" class="recommend-card" 
+                   style="text-decoration: none; color: inherit; display: flex; flex-direction: column; cursor: pointer; transition: all 0.2s ease;"
+                   onmouseover="this.style.transform='translateY(-3px)'"
+                   onmouseout="this.style.transform='translateY(0)'">
+                    
                     <div class="recommend-img-wrapper">
                         {% if prod.gambar %}
                         <img src="{{ prod.gambar.url }}" alt="{{ prod.nama }}" class="recommend-img">
@@ -489,16 +494,10 @@
                         <p>Rp {{ prod.harga|floatformat:0|intcomma }}</p>
                     </div>
 
-                    <form method="POST" action="{% url 'beli_produk' prod.pk %}" style="margin: 0;">
-                        {% csrf_token %}
-                        <button type="submit" class="action-button btn-small">Beli Lagi</button>
-                    </form>
-                </div>
-                {% endfor %}
+                </a> {% endfor %}
             </div>
         </div>
         {% endif %}
-
         <h2 class="section-title">Katalog Produk</h2>
 
         <div class="product-grid">
