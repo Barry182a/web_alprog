@@ -301,10 +301,19 @@ def search_view(request):
             'pakaian': ['baju', 'kaos', 'kemeja', 'pakai', 'busana'],
             'celana': ['jeans', 'bawahan', 'kulot', 'lewis'],
             'sepatu': ['sneakers', 'alas kaki', 'sandal', 'selop'],
+            
+            # Master Kunci Gender
             'pria': ['laki', 'cowok', 'lelaki', 'boys', 'men'],
             'laki': ['pria', 'cowok', 'lelaki', 'boy', 'man'],
             'wanita': ['perempuan', 'cewek', 'gadis', 'girls', 'women'],
-            'perempuan': ['wanita', 'cewek', 'gadis', 'girl', 'woman']
+            'perempuan': ['wanita', 'cewek', 'gadis', 'girl', 'woman'],
+            
+            # Tambahan Jalur Kunci Baru (Menyelesaikan Masalah Bocor)
+            'cowok': ['pria', 'laki', 'lelaki', 'men'],
+            'laki-laki': ['pria', 'laki', 'lelaki', 'man'],
+            'lelaki': ['pria', 'laki', 'cowok'],
+            'cewek': ['wanita', 'perempuan', 'gadis', 'women'],
+            'perempuan': ['wanita', 'cewek', 'gadis', 'woman']
         }
         
         kata_kunci = query.split()
